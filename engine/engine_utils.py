@@ -1,4 +1,5 @@
 import pandera as pa
+import streamlit as st
 from pandera import Column, DataFrameSchema
 import pandas as pd
 import hashlib
@@ -32,10 +33,10 @@ def schema_validation(df: pd.DataFrame, mode: Literal['train','predict']) -> pd.
 
     try:
         df_validado = schema.validate(df)
+        return df_validado
     except pa.errors.SchemaError as e:
-        print(f"Error: {e}")
-
-    return df_validado
+        st.error(f"Error de validación de esquema: {e}")
+        return None
 
 def generate_hash(row):
     # ESTANDARIZACIÓN

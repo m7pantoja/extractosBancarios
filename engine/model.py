@@ -1,7 +1,7 @@
 import pandas as pd
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import LabelEncoder
-import utils
+import engine_utils
 
 class Model:
     def __init__(self, pipeline: Pipeline, label_encoder: LabelEncoder, metadata: dict):
@@ -26,10 +26,8 @@ class Model:
             metadata=model_dict['metadata']
         )
 
-    def predict(self, data: pd.DataFrame):
-        "Make predictions using the model. The dataframe must have the right schema."
-
-        validated_data = utils.schema_validation(data, mode='predict') # validating the schema
+    def predict(self, validated_data: pd.DataFrame):
+        "Make predictions using the model. The dataframe must have been validated."
 
         # new variables for training the model
         validated_data['fecha_day'] = validated_data['fecha'].dt.day

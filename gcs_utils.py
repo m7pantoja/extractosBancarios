@@ -3,9 +3,10 @@ from google.oauth2 import service_account
 from google.cloud import storage
 import joblib
 import os
+import engine.model as model
 
 @st.cache_resource
-def load_model_from_gcs(bucket_name, blob_name):
+def load_model_from_gcs(bucket_name, blob_name) -> model.Model:
     try:
         # Autenticación
         info = st.secrets["gcp_service_account"]
@@ -21,11 +22,14 @@ def load_model_from_gcs(bucket_name, blob_name):
         blob.download_to_filename(temp_name)
         
         # Carga
-        model = joblib.load(temp_name)
+        model_dict = joblib.load(temp_name)
             
         # Limpieza
         if os.path.exists(temp_name):
             os.remove(temp_name)
+        
+        # Instanciación
+        model = model.Model.from_dict(model_dict)
         
         return model
 

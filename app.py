@@ -1,4 +1,12 @@
 import streamlit as st
+import app_utils
+import engine.engine_utils as engine_utils
+import gcs_utils
+import engine.model as model
+
+#  Constantes
+bucket_name = 'extractosbancarios-cloud-lf'
+blob_name_general = 'models/general/general_v1.joblib'
 
 # Configuración de la página
 st.set_page_config(
@@ -43,7 +51,49 @@ def show_homepage():
 def show_general():
     st.button("⬅️ Volver al Inicio", on_click=go2homepage)
     st.header("Etiquetado General")
-    st.info("Aquí irán las herramientas para la clasificación general de extractos.")
+
+    # Files uploader
+    uploaded_files = st.file_uploader(
+        "Arrastra tus archivos aquí o haz clic para buscar", 
+        type=['csv', 'xlsx', 'xls'],
+        accept_multiple_files=True,
+        help="Soporta archivos Excel y CSV"
+    )
+
+    if st.button("🚀 Etiquetar", type="primary"):
+        if not uploaded_files:
+            st.warning("⚠️ Por favor, sube al menos un archivo para continuar.")
+        else:
+            with st.spinner("Procesando archivos..."):
+
+                # 1. Unificar archivos
+                df = app_utils.files_to_dataframe(uploaded_files)
+                
+                if df is not None and not df.empty:
+                    # 2. Validar esquema
+                    df_validado = engine_utils.schema_validation(df, mode='predict')
+                    
+                    if df_validado is not None:
+                        # 3. Cargar modelo
+                        st.info("Cargando modelo desde GCS...")
+                        loaded_model = gcs_utils.load_model_from_gcs(
+                            bucket_name, 
+                            blob_name_general
+                        )
+                        
+                        if loaded_model:
+                            # 4. Predicción
+                            try:
+                                df_result = loaded_model.predict(df_validado)
+                                st.success("✅ ¡Etiquetado completado con éxito!")
+                                st.dataframe(df_result, use_container_width=True)
+                            except Exception as e:
+                                st.error(f"Error durante la predicción: {e}")
+                        else:
+                            st.error("No se pudo cargar el modelo.")
+                else:
+                    st.error("No se pudieron leer datos de los archivos subidos.")
+
 
 def show_personalized():
     st.button("⬅️ Volver al Inicio", on_click=go2homepage)
@@ -53,7 +103,14 @@ def show_personalized():
 def show_ibecosol():
     st.button("⬅️ Volver al Inicio", on_click=go2homepage)
     st.header("Etiquetado Ibecosol")
-    st.success("Módulo específico para Ibecosol listo para configurar.")
+    
+    # Files uploader
+    uploaded_files = st.file_uploader(
+        "Arrastra los archivos que quieres etiqueta o haz clic para buscar", 
+        type=['csv', 'xlsx', 'xls'],
+        accept_multiple_files=True,
+        help="Soporta archivos Excel y CSV"
+    )
 
 # --- CONTROLADOR PRINCIPAL ---
     

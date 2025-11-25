@@ -6,7 +6,7 @@ from sklearn.preprocessing import LabelEncoder
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.utils.class_weight import compute_sample_weight
 import model
-import utils
+import engine_utils
 
 # FUNCIÓN PRINCIPAL ------------------------------------------------
 
@@ -17,7 +17,7 @@ def train_model(df: pd.DataFrame, metadata: dict) -> model.Model:
     returning an object of the class Model with the provided metadata.
     '''
 
-    df_validated = utils.schema_validation(df, mode='train') # validating the schema
+    df_validated = engine_utils.schema_validation(df, mode='train') # validating the schema
 
     # new variables for training the model
     df_validated['fecha_day'] = df_validated['fecha'].dt.day
