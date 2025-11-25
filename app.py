@@ -68,7 +68,7 @@ def show_general():
 
                 # 1. Unificar archivos
                 df = app_utils.files_to_dataframe(uploaded_files)
-                
+
                 if df is not None and not df.empty:
                     # 2. Validar esquema
                     df_validado = engine_utils.schema_validation(df, mode='predict')

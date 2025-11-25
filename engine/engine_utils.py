@@ -20,7 +20,7 @@ def schema_validation(df: pd.DataFrame, mode: Literal['train','predict']) -> pd.
     '''
 
     columns = {
-        "fecha": Column(pa.DateTime), 
+        "fecha": Column(pa.DateTime, coerce=True), 
         "descripcion": Column(pa.String),
         "importe": Column(pa.Float),
         "saldo": Column(pa.Float)
