@@ -5,8 +5,8 @@ from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import LabelEncoder
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.utils.class_weight import compute_sample_weight
-import model
-import engine_utils
+import engine.model as model
+import engine.engine_utils as engine_utils
 
 # FUNCIÓN PRINCIPAL ------------------------------------------------
 
@@ -69,4 +69,6 @@ def train_model(df: pd.DataFrame, metadata: dict) -> model.Model:
 
     pipeline.fit(X, Y_encoded, classifier__sample_weight=sample_weights)
 
-    return model.Model(pipeline, le, metadata)
+    deployed_model = model.Model(pipeline, le, metadata)
+
+    return deployed_model
