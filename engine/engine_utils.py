@@ -1,4 +1,4 @@
-import pandera as pa
+import pandera.pandas as pa
 import streamlit as st
 from pandera import Column, DataFrameSchema
 import pandas as pd
@@ -20,7 +20,7 @@ def schema_validation(df: pd.DataFrame, mode: Literal['train','predict']) -> pd.
     '''
 
     columns = {
-        "fecha": Column(pa.DateTime, coerce=True), 
+        "fecha": Column(pa.String), 
         "descripcion": Column(pa.String),
         "importe": Column(pa.Float),
         "saldo": Column(pa.Float)
@@ -33,9 +33,15 @@ def schema_validation(df: pd.DataFrame, mode: Literal['train','predict']) -> pd.
 
     try:
         df_validado = schema.validate(df)
-        return df_validado
     except pa.errors.SchemaError as e:
         st.error(f"Error de validación de esquema: {e}")
+        return None
+
+    try:
+        df_validado['fecha'] = pd.to_datetime(df_validado['fecha'], format='mixed')
+        return df_validado
+    except ValueError as e:
+        st.error(f"Error al convertir la fecha: {e}")
         return None
 
 def generate_hash(row):
