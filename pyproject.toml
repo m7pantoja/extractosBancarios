@@ -6,9 +6,12 @@ readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     "google-cloud-storage>=3.6.0",
+    "joblib>=1.5.2",
     "pandas>=2.3.3",
+    "pandera>=0.26.1",
     "scikit-learn>=1.7.2",
     "streamlit>=1.51.0",
+    "xgboost>=3.1.2",
 ]
 
 [dependency-groups]
