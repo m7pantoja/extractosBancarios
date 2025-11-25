@@ -1,7 +1,6 @@
 import pandas as pd
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import LabelEncoder
-import engine_utils
 
 class Model:
     def __init__(self, pipeline: Pipeline, label_encoder: LabelEncoder, metadata: dict):
