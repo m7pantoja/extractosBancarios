@@ -8,6 +8,8 @@ import engine.model as model
 @st.cache_resource
 def load_model_from_gcs(bucket_name, blob_name) -> model.Model:
     try:
+        deployed_model = None
+        
         # Autenticación
         info = st.secrets["gcp_service_account"]
         credentials = service_account.Credentials.from_service_account_info(info)
@@ -29,9 +31,9 @@ def load_model_from_gcs(bucket_name, blob_name) -> model.Model:
             os.remove(temp_name)
         
         # Instanciación
-        model = model.Model.from_dict(model_dict)
+        deployed_model = model.Model.from_dict(model_dict)
         
-        return model
+        return deployed_model
 
     except Exception as e:
         st.error(f"Error crítico conectando con GCS: {e}")
