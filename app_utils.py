@@ -1,7 +1,6 @@
-from streamlit import UploadedFile
 import pandas as pd
 
-def files_to_dataframe(uploaded_files: list[UploadedFile]) -> pd.DataFrame: 
+def files_to_dataframe(uploaded_files: list) -> pd.DataFrame: 
     """
     Transforma los archivos de una lista de UploadedFile en un único DataFrame.
 
