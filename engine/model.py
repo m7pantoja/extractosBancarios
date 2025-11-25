@@ -28,21 +28,22 @@ class Model:
     def predict(self, validated_data: pd.DataFrame):
         "Make predictions using the model. The dataframe must have been validated."
 
+        data = validated_data.copy()
         # new variables for training the model
-        validated_data['fecha_day'] = validated_data['fecha'].dt.day
-        validated_data['fecha_month'] = validated_data['fecha'].dt.month
-        validated_data['fecha_year'] = validated_data['fecha'].dt.year
+        data['fecha_day'] = data['fecha'].dt.day
+        data['fecha_month'] = data['fecha'].dt.month
+        data['fecha_year'] = data['fecha'].dt.year
 
         features = ['fecha_day', 'fecha_month','fecha_year','descripcion','importe','saldo']
         target = 'etiqueta'
 
-        X = validated_data[features]
+        X = data[features]
         Y_pred = self.pipeline.predict(X)
 
         Y_pred_labels = self.label_encoder.inverse_transform(Y_pred)
-        data[target] = Y_pred_labels
+        validated_data[target] = Y_pred_labels
 
-        return data
+        return validated_data
 
     def __repr__(self):
         v = self.metadata.get('version', 'N/A')
