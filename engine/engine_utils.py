@@ -1,9 +1,10 @@
 import pandera.pandas as pa
-import streamlit as st
 from pandera import Column, DataFrameSchema
 import pandas as pd
 import hashlib
 from typing import Literal
+import custom_exceptions
+import logging
 
 def schema_validation(df: pd.DataFrame, mode: Literal['train','predict']) -> pd.DataFrame:
     '''
@@ -34,15 +35,46 @@ def schema_validation(df: pd.DataFrame, mode: Literal['train','predict']) -> pd.
     try:
         df_validado = schema.validate(df)
     except pa.errors.SchemaError as e:
-        st.error(f"Error de validación de esquema: {e}")
+        logging.error(f"Error al validar esquema: {e}")
+        raise custom_exceptions.SchemaValidationError(f"Error al validar esquema.")
         return None
 
     try:
         df_validado['fecha'] = pd.to_datetime(df_validado['fecha'], format='mixed')
         return df_validado
     except ValueError as e:
-        st.error(f"Error al convertir la fecha: {e}")
+        logging.error(f"Error al convertir la fecha: {e}")
+        raise custom_exceptions.DateConversionError(f"Error al convertir la fecha.")
         return None
+
+def files_to_dataframe(uploaded_files: list) -> pd.DataFrame: 
+    """
+    Transforma los archivos de una lista de UploadedFile en un único DataFrame.
+
+    Args:
+        uploaded_files: La lista de archivos de tipo UploadedFile.
+    Returns:
+        Un DataFrame de pandas con los datos de los archivos.
+    """
+
+    dfs = list()
+    try:
+        for file in uploaded_files:
+
+            # 1. XLSX y XLS
+            if file.name.endswith('.xlsx') or file.name.endswith('.xls'):
+                dfs.append(pd.read_excel(file))
+
+            # 2. CSV
+            elif file.name.endswith('.csv'):
+                dfs.append(pd.read_csv(file))
+            
+        data = pd.concat(dfs)
+    except Exception as e:
+        logging.error(f"Error al procesar archivos: {e}")
+        raise custom_exceptions.FileProcessingError(f"Error al procesar archivos.")
+
+    return data
 
 def generate_hash(row):
     # ESTANDARIZACIÓN

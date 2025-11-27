@@ -1,14 +1,19 @@
-import streamlit as st
 from google.oauth2 import service_account
 from google.cloud import storage
+import streamlit as st
 import joblib
 import os
-import engine.model as model
+import logging
+from typing import Literal
+import custom_exceptions
+
+bucket_name = 'extractosbancarios-cloud-lf'
+blob_names = {'general':'models/general/general_v1.joblib',
+              'ibecosol':'models/ibecosol/ibecosol_v1.joblib'}
 
 @st.cache_resource
-def load_model_from_gcs(bucket_name, blob_name) -> model.Model:
+def download_model_from_gcs(model_name: Literal['general', 'ibecosol']) -> dict:
     try:
-        deployed_model = None
 
         # Autenticación
         info = st.secrets["gcp_service_account"]
@@ -17,7 +22,7 @@ def load_model_from_gcs(bucket_name, blob_name) -> model.Model:
         # Conexión
         client = storage.Client(credentials=credentials, project=info["project_id"])
         bucket = client.bucket(bucket_name)
-        blob = bucket.blob(blob_name)
+        blob = bucket.blob(blob_names[model_name])
         
         # Descarga
         temp_name = "temp_model.joblib"
@@ -30,11 +35,9 @@ def load_model_from_gcs(bucket_name, blob_name) -> model.Model:
         if os.path.exists(temp_name):
             os.remove(temp_name)
         
-        # Instanciación
-        deployed_model = model.Model.from_dict(model_dict)
-        
-        return deployed_model
+        return model_dict  
 
     except Exception as e:
-        st.error(f"Error crítico conectando con GCS: {e}")
-        return deployed_model
+        logging.error(f"Error al descargar el modelo de GCS: {e}")
+        raise custom_exceptions.ModelDownloadError(f"Error al descargar el modelo.")
+        return None

@@ -1,5 +1,4 @@
 # macOS
-.DS_Store
 **/.DS_Store
 
 # Python-generated files
@@ -13,4 +12,8 @@ wheels/
 # Virtual environments
 .venv
 
-sandbox/
+# Streamlit
+.streamlit
+
+# uv dependencies
+uv.lock
