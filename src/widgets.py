@@ -1,13 +1,14 @@
 import streamlit as st
-from engine import tag_files
+from engine.tagger import tag_files
 import custom_exceptions
 from typing import Literal
 import pandas as pd
+import logging
 
-def file_uploader() -> list:
+def file_uploader(msg: str) -> list:
 
     uploaded_files = st.file_uploader(
-        "Arrastra los archivos que quieres etiquetar o haz clic para buscar", 
+        msg, 
         type=['csv', 'xlsx', 'xls'],
         accept_multiple_files=True,
         help="Soporta archivos Excel y CSV"
@@ -15,14 +16,21 @@ def file_uploader() -> list:
 
     return uploaded_files
 
-def tag_button(uploaded_files, model_name: Literal['general', 'ibecosol']) -> pd.DataFrame:
+def tag_button(uploaded_files, mode: Literal['general','ibecosol','personalized']) -> pd.DataFrame:
+
     if st.button("Etiquetar", type="primary"):
+
         if not uploaded_files:
             st.warning("⚠️ Por favor, sube al menos un archivo para continuar.")
+            return
+        if mode == 'personalized' and (not uploaded_files[0] or not uploaded_files[1]):
+            st.warning("⚠️ Por favor, sube al menos un archivo de entrenamiento y otro de predicción para continuar.")
+            return
+
         else:
             with st.spinner("Procesando archivos..."):
                 try: 
-                    df_result = tag_files(uploaded_files, model_name)
+                    df_result = tag_files(uploaded_files, mode)
                     
                     st.success("✅ ¡Etiquetado completado con éxito!")
                     st.dataframe(df_result, use_container_width=True)
@@ -42,6 +50,12 @@ def tag_button(uploaded_files, model_name: Literal['general', 'ibecosol']) -> pd
                     st.error(f"¡Error al descargar el modelo!")
 
                 except Exception as e:
+                    logging.error(f"Error no identificado: {e}")
                     st.error(f"¡Error no identificado!")
 
+def home_button():
+    if st.button("⬅️ Volver al Inicio"):
+        st.session_state['current_view'] = 'home'
+        st.rerun()
 
+    

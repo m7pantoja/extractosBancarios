@@ -1,9 +1,8 @@
 import streamlit as st
-import home
-import src_utils
+import widgets
 
 def show_page():
-    st.button("⬅️ Volver al Inicio", on_click=home.show_page())
+    widgets.home_button()
     st.header("Etiquetado Ibecosol")
 
     # INSTRUCCIONES SOBRE EL FORMATO DE LOS ARCHIVOS
@@ -32,7 +31,7 @@ def show_page():
     """)
 
     # FILE UPLOADER
-    uploaded_files = src_utils.file_uploader()
+    uploaded_files = widgets.file_uploader("Arrastra los archivos que quieres etiquetar o haz clic para buscar")
 
     # TAG BUTTON
-    df_result = src_utils.tag_button(uploaded_files, 'ibecosol')
+    df_result = widgets.tag_button(uploaded_files, 'ibecosol')

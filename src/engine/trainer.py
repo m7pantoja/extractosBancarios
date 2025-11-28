@@ -5,32 +5,29 @@ from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import LabelEncoder
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.utils.class_weight import compute_sample_weight
-import engine.model as model
-import engine.engine_utils as engine_utils
+from . import model_wrapper
 
 # FUNCIÓN PRINCIPAL ------------------------------------------------
 
-def train_model(df: pd.DataFrame, metadata: dict) -> model.Model:
+def train_model(df: pd.DataFrame, metadata: dict) -> model_wrapper.Model:
     '''
     Validates data, engineers date features, 
     and trains a class-weighted XGBoost pipeline with TF-IDF text processing,
     returning an object of the class Model with the provided metadata.
     '''
 
-    df_validated = engine_utils.schema_validation(df, mode='train') # validating the schema
-
     # new variables for training the model
-    df_validated['fecha_day'] = df_validated['fecha'].dt.day
-    df_validated['fecha_month'] = df_validated['fecha'].dt.month
-    df_validated['fecha_year'] = df_validated['fecha'].dt.year
+    df['fecha_day'] = df['fecha'].dt.day
+    df['fecha_month'] = df['fecha'].dt.month
+    df['fecha_year'] = df['fecha'].dt.year
 
     # ENCODING
 
     features = ['fecha_day','fecha_month','fecha_year','descripcion','importe']
     target = 'etiqueta'
 
-    X = df_validated[features]
-    Y = df_validated[target]
+    X = df[features]
+    Y = df[target]
 
     le = LabelEncoder()
     Y_encoded = le.fit_transform(Y)
@@ -69,6 +66,6 @@ def train_model(df: pd.DataFrame, metadata: dict) -> model.Model:
 
     pipeline.fit(X, Y_encoded, classifier__sample_weight=sample_weights)
 
-    deployed_model = model.Model(pipeline, le, metadata)
+    deployed_model = model_wrapper.Model(pipeline, le, metadata)
 
     return deployed_model
