@@ -17,7 +17,7 @@ def schema_validation(df: pd.DataFrame, mode: Literal['train','predict']) -> pd.
     With mode='train', the 'etiqueta' column is expected. With mode='predict', it is not.
     
     Returns:
-    pd.DataFrame: The validated DataFrame.
+    pd.DataFrame: The validated DataFrame with additional column '__fecha__' for internal use.
     '''
 
     columns = {
@@ -40,7 +40,7 @@ def schema_validation(df: pd.DataFrame, mode: Literal['train','predict']) -> pd.
         return None
 
     try:
-        df_validado['fecha'] = pd.to_datetime(df_validado['fecha'], format='mixed')
+        df_validado['__fecha__'] = pd.to_datetime(df_validado['fecha'], format='mixed')
         return df_validado
     except ValueError as e:
         logging.error(f"Error al convertir la fecha: {e}")

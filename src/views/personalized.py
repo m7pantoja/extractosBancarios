@@ -31,9 +31,8 @@ def show_page():
     5. Para cada conjunto de archivos (etiquetados y no etiquetados) se debe tener la **misma estructura** entre sí, es decir, las mismas columnas.
     """)
 
-
     training_files = widgets.file_uploader("Arrastra los archivos de entrenamiento o haz clic para buscar")
     predict_files = widgets.file_uploader("Arrastra los archivos que quieres etiquetar o haz clic para buscar")
     uploaded_files = [training_files, predict_files]
 
-    df_result = widgets.tag_button(uploaded_files, 'personalized')
+    widgets.tag_button(uploaded_files, 'personalized')

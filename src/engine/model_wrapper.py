@@ -1,6 +1,8 @@
 import pandas as pd
+import numpy as np
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import LabelEncoder
+from .engine_utils import schema_validation
 
 class Model:
     def __init__(self, pipeline: Pipeline, label_encoder: LabelEncoder, metadata: dict):
@@ -25,25 +27,28 @@ class Model:
             metadata=model_dict['metadata']
         )
 
-    def predict(self, validated_data: pd.DataFrame):
-        "Make predictions using the model. The dataframe must have been validated."
+    def predict(self, data: pd.DataFrame):
+        """Validates the data, makes predictions using the model, and returns the confidence."""
 
-        data = validated_data.copy()
+        validated_data = schema_validation(data, mode='predict') # creates column '__fecha__' for internal use
+
         # new variables for training the model
-        data['fecha_day'] = data['fecha'].dt.day
-        data['fecha_month'] = data['fecha'].dt.month
-        data['fecha_year'] = data['fecha'].dt.year
+        validated_data['fecha_day'] = validated_data['__fecha__'].dt.day
+        validated_data['fecha_month'] = validated_data['__fecha__'].dt.month
+        validated_data['fecha_year'] = validated_data['__fecha__'].dt.year
 
         features = ['fecha_day', 'fecha_month','fecha_year','descripcion','importe','saldo']
         target = 'etiqueta'
 
-        X = data[features]
+        X = validated_data[features]
         Y_pred = self.pipeline.predict(X)
+        Y_pred_proba = self.pipeline.predict_proba(X)
+        confidence = np.max(Y_pred_proba, axis=1)
 
         Y_pred_labels = self.label_encoder.inverse_transform(Y_pred)
-        validated_data[target] = Y_pred_labels
+        data[target] = Y_pred_labels
 
-        return validated_data
+        return data, confidence
 
     def __repr__(self):
         v = self.metadata.get('version', 'N/A')

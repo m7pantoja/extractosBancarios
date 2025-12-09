@@ -6,6 +6,7 @@ from sklearn.preprocessing import LabelEncoder
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.utils.class_weight import compute_sample_weight
 from . import model_wrapper
+from .engine_utils import schema_validation
 
 # FUNCIÓN PRINCIPAL ------------------------------------------------
 
@@ -16,18 +17,20 @@ def train_model(df: pd.DataFrame, metadata: dict) -> model_wrapper.Model:
     returning an object of the class Model with the provided metadata.
     '''
 
+    validated_df = schema_validation(df, mode='train') # creates column '__fecha__' for internal use
+
     # new variables for training the model
-    df['fecha_day'] = df['fecha'].dt.day
-    df['fecha_month'] = df['fecha'].dt.month
-    df['fecha_year'] = df['fecha'].dt.year
+    validated_df['fecha_day'] = validated_df['__fecha__'].dt.day
+    validated_df['fecha_month'] = validated_df['__fecha__'].dt.month
+    validated_df['fecha_year'] = validated_df['__fecha__'].dt.year
 
     # ENCODING
 
     features = ['fecha_day','fecha_month','fecha_year','descripcion','importe']
     target = 'etiqueta'
 
-    X = df[features]
-    Y = df[target]
+    X = validated_df[features]
+    Y = validated_df[target]
 
     le = LabelEncoder()
     Y_encoded = le.fit_transform(Y)
