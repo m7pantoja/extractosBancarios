@@ -3,8 +3,6 @@ from engine.tagger import tag_files
 import custom_exceptions
 from typing import Literal
 import pandas as pd
-import matplotlib.colors as mcolors
-import matplotlib.cm as cm
 import logging
 
 def file_uploader(msg: str) -> list:
@@ -18,32 +16,32 @@ def file_uploader(msg: str) -> list:
 
     return uploaded_files
 
-def show_data(result, mode: Literal['general','ibecosol','personalized']):
+def show_data(df):
 
-    cmap = cm.get_cmap('RdYlGn') # Selección del mapa de calor
+    data_key = "data_memory"
+    editor_key = "editor_memory"
 
-    def color_row(row):
-        val = row['confidence']
-        rgba = cmap(val) # Obtenemos el color RGBA para este valor exacto (0.0 a 1.0)
-        
-        soft_color = mcolors.to_rgba(rgba, alpha=0.3)
-        css_color = mcolors.to_hex(soft_color, keep_alpha=True)
-        
-        return [f'background-color: {css_color}'] * len(row) # Devolvemos el string CSS para pintar TODA la fila
+    if df is None and data_key not in st.session_state:
+        return
+    elif data_key not in st.session_state:
+        st.session_state[data_key] = df.copy()
 
-    if mode == 'personalized':
-        st.dataframe(result[0], use_container_width=True)
-    else:
-        df = result[0]
-        df['confidence'] = result[1]
+    df_edited = st.data_editor(st.session_state[data_key],
+                   key=editor_key,
+                   use_container_width=True,
+                   column_config={"confidence": st.column_config.ProgressColumn("Nivel de Confianza",
+                                                                                format="%.2f",
+                                                                                min_value=0,
+                                                                                max_value=1)})
 
-        styler = df.style.apply(color_row, axis=1)
-        st.dataframe(styler, use_container_width=True,column_config={'confidence': None})
-
+    return df_edited
 
 def tag_button(uploaded_files, mode: Literal['general','ibecosol','personalized']):
 
     if st.button("Etiquetar", type="primary"):
+
+        if "data_memory" in st.session_state:
+            del st.session_state["data_memory"]
 
         if not uploaded_files:
             st.warning("⚠️ Por favor, sube al menos un archivo para continuar.")
@@ -55,10 +53,10 @@ def tag_button(uploaded_files, mode: Literal['general','ibecosol','personalized'
         else:
             with st.spinner("Procesando archivos..."):
                 try: 
-                    result = tag_files(uploaded_files, mode)
-                    
+                    df_result = tag_files(uploaded_files, mode)
                     st.success("✅ ¡Etiquetado completado con éxito!")
-                    show_data(result,mode)
+                    
+                    return df_result
 
                 except custom_exceptions.FileProcessingError:
                     st.error(f"¡Error al procesar los archivos!")

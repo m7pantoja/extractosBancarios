@@ -14,7 +14,7 @@ def tag_files(uploaded_files: list, mode: Literal['general', 'ibecosol','persona
             model = train_model(unified_train, {'client': 'personalized'}) # posibles errores no controlados
             df_result, _ = model.predict(unified_predict) # posibles errores no controlados. 
 
-            return df_result, None
+            return df_result
         else:           
             unified_df = files_to_dataframe(uploaded_files)
 
@@ -22,6 +22,6 @@ def tag_files(uploaded_files: list, mode: Literal['general', 'ibecosol','persona
             model = model_wrapper.Model.from_dict(model_dict) # posibles errores no controlados
 
             df_result, confidence = model.predict(unified_df) # posibles errores no controlados.
+            df_result['confidence'] = confidence
 
-            return df_result, confidence
-    
+            return df_result
