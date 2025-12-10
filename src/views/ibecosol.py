@@ -34,5 +34,6 @@ def show_page():
     uploaded_files = widgets.file_uploader("Arrastra los archivos que quieres etiquetar o haz clic para buscar")
 
     # TAG BUTTON
-    df_result = widgets.tag_button(uploaded_files, 'ibecosol')
-    df_edited = widgets.show_data(df_result)
+    df_result, label_encoder = widgets.tag_button(uploaded_files, 'ibecosol')
+    df_edited = widgets.show_data(df_result, label_encoder)
+    widgets.save_review(df_edited, 'ibecosol')

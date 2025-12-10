@@ -11,5 +11,13 @@ class DateConversionError(Exception):
     pass
 
 class ModelDownloadError(Exception):
-    """Error al descargar el modelo."""
+    """Error al descargar el modelo de GCS."""
+    pass
+
+class HashGenerationError(Exception):
+    """Error al generar hash."""
+    pass
+
+class DataUploadError(Exception):
+    """Error al subir datos a BigQuery."""
     pass

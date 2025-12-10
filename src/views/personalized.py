@@ -35,5 +35,5 @@ def show_page():
     predict_files = widgets.file_uploader("Arrastra los archivos que quieres etiquetar o haz clic para buscar")
     uploaded_files = [training_files, predict_files]
 
-    df_result = widgets.tag_button(uploaded_files, 'personalized')
-    widgets.show_data(df_result)
+    df_result, label_encoder = widgets.tag_button(uploaded_files, 'personalized')
+    widgets.show_data(df_result, label_encoder)

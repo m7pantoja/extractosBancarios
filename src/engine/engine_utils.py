@@ -77,17 +77,22 @@ def files_to_dataframe(uploaded_files: list) -> pd.DataFrame:
     return data
 
 def generate_hash(row):
-    # ESTANDARIZACIÓN
-    # Formateamos floats a 2 decimales fijos y fechas a string ISO
-    fecha_str = row['fecha'].strftime('%Y-%m-%d')
-    desc_str = str(row['descripcion']).strip() # Quitamos espacios extra
-    importe_str = "{:.2f}".format(row['importe']) 
-    saldo_str = "{:.2f}".format(row['saldo'])
-    
-    # CONCATENACIÓN
-    # Usamos '|' para evitar mezclas accidentales de columnas
-    raw_string = f"{fecha_str}|{desc_str}|{importe_str}|{saldo_str}"
-    
-    # HASHING (SHA256)
-    return hashlib.sha256(raw_string.encode('utf-8')).hexdigest()
+    try:
+        
+        # ESTANDARIZACIÓN
+        # Formateamos floats a 2 decimales fijos y fechas a string ISO
+        fecha_str = row['fecha'].strftime('%Y-%m-%d')
+        desc_str = str(row['descripcion']).strip() # Quitamos espacios extra
+        importe_str = "{:.2f}".format(row['importe']) 
+        saldo_str = "{:.2f}".format(row['saldo'])
+        
+        # CONCATENACIÓN
+        # Usamos '|' para evitar mezclas accidentales de columnas
+        raw_string = f"{fecha_str}|{desc_str}|{importe_str}|{saldo_str}"
+        
+        # HASHING (SHA256)
+        return hashlib.sha256(raw_string.encode('utf-8')).hexdigest()
 
+    except Exception as e:
+        logging.error(f"Error al generar hash: {e}")
+        raise custom_exceptions.HashGenerationError(f"Error al generar hash.")
