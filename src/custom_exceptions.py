@@ -21,3 +21,19 @@ class HashGenerationError(Exception):
 class DataUploadError(Exception):
     """Error al subir datos a BigQuery."""
     pass
+
+class IAAgentError(Exception):
+    """Error al usar el Agente de IA."""
+    pass
+
+class CleaningFileError(Exception):
+    """Error limpiando archivo."""
+    pass
+
+class FileStructureError(Exception):
+    """Los archivos no tienen la misma estructura."""
+    pass
+
+class InvalidFileError(Exception):
+    """El archivo no es válido."""
+    pass

@@ -30,12 +30,12 @@ class Model:
     def predict(self, data: pd.DataFrame):
         """Validates the data, makes predictions using the model, and returns the confidence."""
 
-        validated_data = schema_validation(data, mode='predict') # creates column '__fecha__' for internal use
+        validated_data = schema_validation(data, mode='predict')
 
         # new variables for training the model
-        validated_data['fecha_day'] = validated_data['__fecha__'].dt.day
-        validated_data['fecha_month'] = validated_data['__fecha__'].dt.month
-        validated_data['fecha_year'] = validated_data['__fecha__'].dt.year
+        validated_data['fecha_day'] = validated_data['fecha'].dt.day
+        validated_data['fecha_month'] = validated_data['fecha'].dt.month
+        validated_data['fecha_year'] = validated_data['fecha'].dt.year
 
         features = ['fecha_day', 'fecha_month','fecha_year','descripcion','importe','saldo']
         target = 'etiqueta'

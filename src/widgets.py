@@ -5,6 +5,7 @@ import custom_exceptions
 from typing import Literal
 import pandas as pd
 import logging
+import time
 
 # FUNCIONES AUXILIARES ----------
 
@@ -36,7 +37,14 @@ def show_data(df, label_encoder):
         return
     
     if df is not None:
-        st.session_state[DATA_KEY] = df.copy()
+        data = df.copy()
+        data.rename(columns={'fecha':'Fecha',
+                             'descripcion':'Descripción', 
+                             'importe':'Importe', 
+                             'saldo':'Saldo',
+                             'etiqueta':'Etiqueta'}, inplace=True)
+
+        st.session_state[DATA_KEY] = data
 
     if label_encoder is not None:
         st.session_state[CLASSES_KEY] = list(label_encoder.classes_)
@@ -48,7 +56,7 @@ def show_data(df, label_encoder):
                                                                             format="%.2f",
                                                                             min_value=0,
                                                                             max_value=1),
-                               "etiqueta": st.column_config.SelectboxColumn("Etiqueta",
+                               "Etiqueta": st.column_config.SelectboxColumn("Etiqueta",
                                                                             options=st.session_state[CLASSES_KEY],
                                                                             required=True)})
 
@@ -85,6 +93,18 @@ def tag_button(uploaded_files, mode: Literal['general','ibecosol','personalized'
                 except custom_exceptions.ModelDownloadError:
                     st.error(f"¡Error al descargar el modelo!")
 
+                except custom_exceptions.FileStructureError:
+                    st.error(f"¡Los archivos no tienen la misma estructura!")
+
+                except custom_exceptions.InvalidFileError as e:
+                    st.error(f"¡El archivo no es válido! {e}")
+
+                except custom_exceptions.CleaningFileError:
+                    st.error(f"¡Error limpiando archivo!")
+                
+                except custom_exceptions.IAAgentError:
+                    st.error(f"¡Error usando el Agente de IA!")
+
                 except Exception as e:
                     logging.error(f"Error no identificado: {e}")
                     st.error(f"¡Error no identificado!")
@@ -110,7 +130,9 @@ def confirm_save_dialog(df, mode):
                 try:
                     upload_review(df, mode)
                     
+                    
                     st.success("✅ ¡Revisión guardada correctamente!")
+                    time.sleep(2)
                     st.rerun()
                     
                 except custom_exceptions.SchemaValidationError:
