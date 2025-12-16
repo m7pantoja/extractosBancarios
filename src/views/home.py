@@ -1,4 +1,7 @@
 import streamlit as st
+from engine.uploader import upload_feedback
+import time
+import custom_exceptions
 
 def show_page():
     st.title("Etiquetado de Extractos Bancarios")
@@ -22,3 +25,24 @@ def show_page():
         if st.button("Etiquetado Ibecosol", width='stretch'):
             st.session_state['current_view'] = 'ibecosol'
             st.rerun()
+
+    st.text("\n")
+
+    st.subheader("Comentarios y Sugerencias")
+    
+    with st.form("feedback_form"):
+        comment = st.text_area("Deja tu comentario para mejorar la herramienta:", height=100)
+        submitted = st.form_submit_button("Enviar Comentario")
+        
+        if submitted:
+            if comment.strip():
+                with st.spinner("Enviando comentario..."):
+                    try:
+                        upload_feedback(comment)
+                        st.success("¡Gracias por tu comentario!")
+                        time.sleep(2)
+                        st.rerun()
+                    except custom_exceptions.DataUploadError:
+                        st.error(f"¡Error al subir el comentario a la base de datos!")
+            else:
+                st.warning("Por favor, escribe un comentario antes de enviar.")

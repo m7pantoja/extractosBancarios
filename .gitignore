@@ -17,3 +17,6 @@ wheels/
 
 # uv dependencies
 uv.lock
+
+# Anotaciones
+src/views/instruccionesSinAgente.txt

@@ -37,14 +37,7 @@ def show_data(df, label_encoder):
         return
     
     if df is not None:
-        data = df.copy()
-        data.rename(columns={'fecha':'Fecha',
-                             'descripcion':'Descripción', 
-                             'importe':'Importe', 
-                             'saldo':'Saldo',
-                             'etiqueta':'Etiqueta'}, inplace=True)
-
-        st.session_state[DATA_KEY] = data
+        st.session_state[DATA_KEY] = df.copy()
 
     if label_encoder is not None:
         st.session_state[CLASSES_KEY] = list(label_encoder.classes_)
@@ -56,9 +49,13 @@ def show_data(df, label_encoder):
                                                                             format="%.2f",
                                                                             min_value=0,
                                                                             max_value=1),
-                               "Etiqueta": st.column_config.SelectboxColumn("Etiqueta",
+                               "etiqueta": st.column_config.SelectboxColumn("Etiqueta",
                                                                             options=st.session_state[CLASSES_KEY],
-                                                                            required=True)})
+                                                                            required=True),
+                               "fecha": st.column_config.DateColumn("Fecha"),
+                               "descripcion": st.column_config.TextColumn("Descripción"),
+                               "importe": st.column_config.NumberColumn("Importe"),
+                               "saldo": st.column_config.NumberColumn("Saldo")})
 
     return df_edited
 
