@@ -30,7 +30,7 @@ def show_page():
 
     st.subheader("Comentarios y Sugerencias")
     
-    with st.form("feedback_form"):
+    with st.form("feedback_form", clear_on_submit=True):
         comment = st.text_area("Deja tu comentario para mejorar la herramienta:", height=100)
         submitted = st.form_submit_button("Enviar Comentario")
         
