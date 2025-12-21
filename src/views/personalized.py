@@ -1,5 +1,5 @@
 import streamlit as st
-from src import widgets
+import widgets
 
 def show_page():
     widgets.home_button()
