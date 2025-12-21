@@ -76,31 +76,36 @@ def clean_file(file, file_type: Literal['excel','csv'], schema: BankStatementSch
         df_renamed['fecha'] = pd.to_datetime(df_renamed['fecha'], format=schema.date_format)
         
         # 2. Importe y Saldo
-        def clean_decimal(val):
-
+        def clean_currency(val):
             if pd.isna(val) or val == '':
                 return np.nan
 
-            s = str(val).strip()
+            s = str(val) # Convertimos a string crudo
+
+            # --- Eliminar Símbolo de Moneda ---
+            if schema.currency_symbol:
+                s = s.replace(schema.currency_symbol, '')
+                
+            s = s.strip()
 
             if not s: 
                 return np.nan
+
+            # --- Eliminar Separador de Miles ---
+            if schema.thousand_separator:
+                s = s.replace(schema.thousand_separator, '')
                 
-            # Si el separador decimal es coma
+            # --- Normalizar Decimal ---
             if schema.decimal_separator == ',':
-                # Eliminar puntos de miles, cambiar coma decimal por punto
-                s = s.replace('.', '').replace(',', '.')
-            else:
-                # Si es punto, solo eliminamos comas de miles
-                s = s.replace(',', '')
+                s = s.replace(',', '.')
                 
             try:
                 return float(s)
             except ValueError:
                 return np.nan
 
-        df_renamed['importe'] = df_renamed['importe'].apply(clean_decimal)
-        df_renamed['saldo'] = df_renamed['saldo'].apply(clean_decimal)
+        df_renamed['importe'] = df_renamed['importe'].apply(clean_currency)
+        df_renamed['saldo'] = df_renamed['saldo'].apply(clean_currency)
 
 
         df_clean = df_renamed.dropna(subset=['fecha','descripcion','importe','saldo'])
