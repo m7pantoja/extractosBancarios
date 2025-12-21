@@ -1,7 +1,7 @@
 import streamlit as st
 from engine.uploader import upload_feedback
 import time
-import custom_exceptions
+from src import custom_exceptions
 
 def show_page():
     st.title("Etiquetado de Extractos Bancarios")
@@ -14,7 +14,7 @@ def show_page():
             st.session_state['current_view'] = 'general'
             st.rerun()
             
-        st.write("") # Pequeño espacio vertical
+        st.write("")
         
         if st.button("Etiquetado Personalizado", width='stretch'):
             st.session_state['current_view'] = 'personalized'
@@ -24,6 +24,12 @@ def show_page():
 
         if st.button("Etiquetado Ibecosol", width='stretch'):
             st.session_state['current_view'] = 'ibecosol'
+            st.rerun()
+
+        st.write("")
+
+        if st.button("Etiquetado Erretres", width='stretch'):
+            st.session_state['current_view'] = 'erretres'
             st.rerun()
 
     st.text("\n")

@@ -4,7 +4,7 @@ from google import genai
 from google.genai import types
 import streamlit as st
 import logging
-import custom_exceptions
+from src import custom_exceptions
 import pandas as pd
 
 class BankStatementSchema(BaseModel):

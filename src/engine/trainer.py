@@ -17,12 +17,12 @@ def train_model(df: pd.DataFrame, metadata: dict) -> model_wrapper.Model:
     returning an object of the class Model with the provided metadata.
     '''
 
-    validated_df = schema_validation(df, mode='train') # creates column '__fecha__' for internal use
+    validated_df = schema_validation(df, mode='train')
 
     # new variables for training the model
-    validated_df['fecha_day'] = validated_df['__fecha__'].dt.day
-    validated_df['fecha_month'] = validated_df['__fecha__'].dt.month
-    validated_df['fecha_year'] = validated_df['__fecha__'].dt.year
+    validated_df['fecha_day'] = validated_df['fecha'].dt.day
+    validated_df['fecha_month'] = validated_df['fecha'].dt.month
+    validated_df['fecha_year'] = validated_df['fecha'].dt.year
 
     # ENCODING
 

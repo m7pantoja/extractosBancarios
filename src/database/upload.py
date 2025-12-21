@@ -2,14 +2,15 @@ from google.oauth2 import service_account
 from google.cloud import bigquery
 import streamlit as st
 import logging
-import custom_exceptions
+from src import custom_exceptions
 from typing import Literal
 
 table_ids = {'general':'cloud-lf.extractosBancarios.general_tagged',
              'ibecosol':'cloud-lf.extractosBancarios.ibecosol_tagged',
+             'erretres':'cloud-lf.extractosBancarios.erretres_tagged',
              'feedback':'cloud-lf.extractosBancarios.feedback'}
 
-def upload_data_to_bigquery(df, mode: Literal['general', 'ibecosol']):
+def upload_data_to_bigquery(df, mode: Literal['general', 'ibecosol','erretres']):
     """
     Sube un DataFrame a BigQuery.
     

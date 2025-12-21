@@ -5,14 +5,15 @@ import joblib
 import os
 import logging
 from typing import Literal
-import custom_exceptions
+from src import custom_exceptions
 
 bucket_name = 'extractosbancarios-cloud-lf'
 blob_names = {'general':'models/general/general_v1.joblib',
-              'ibecosol':'models/ibecosol/ibecosol_v1.joblib'}
+              'ibecosol':'models/ibecosol/ibecosol_v1.joblib',
+              'erretres':'models/erretres/erretres_v1.joblib'}
 
 @st.cache_resource
-def download_model_from_gcs(model_name: Literal['general', 'ibecosol']) -> dict:
+def download_model_from_gcs(model_name: Literal['general', 'ibecosol','erretres']) -> dict:
     try:
 
         # Autenticación

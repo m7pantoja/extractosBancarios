@@ -20,3 +20,6 @@ uv.lock
 
 # Anotaciones
 src/views/instruccionesSinAgente.txt
+
+# Sandbox
+sandbox.ipynb

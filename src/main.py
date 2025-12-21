@@ -22,3 +22,6 @@ elif st.session_state['current_view'] == 'personalized':
     views.personalized.show_page()
 elif st.session_state['current_view'] == 'ibecosol':
     views.ibecosol.show_page()
+elif st.session_state['current_view'] == 'erretres':
+    views.erretres.show_page()
+    

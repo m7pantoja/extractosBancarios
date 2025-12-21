@@ -1,7 +1,7 @@
 import streamlit as st
-from engine.tagger import tag_files
-from engine.uploader import upload_review
-import custom_exceptions
+from src.engine.tagger import tag_files
+from src.engine.uploader import upload_review
+from src import custom_exceptions
 from typing import Literal
 import pandas as pd
 import logging
@@ -59,7 +59,7 @@ def show_data(df, label_encoder):
 
     return df_edited
 
-def tag_button(uploaded_files, mode: Literal['general','ibecosol','personalized']):
+def tag_button(uploaded_files, mode: Literal['general','ibecosol','erretres','personalized']):
 
     if st.button("Etiquetar", type="primary",on_click=clean_memory):
 
@@ -127,7 +127,6 @@ def confirm_save_dialog(df, mode):
                 try:
                     upload_review(df, mode)
                     
-                    
                     st.success("✅ ¡Revisión guardada correctamente!")
                     time.sleep(2)
                     st.rerun()
@@ -152,7 +151,7 @@ def confirm_save_dialog(df, mode):
         if st.button("No, cancelar"):
             st.rerun()
 
-def save_review(df_edited: pd.DataFrame, mode: Literal['general','ibecosol','personalized']):
+def save_review(df_edited: pd.DataFrame, mode: Literal['general','ibecosol','erretres','personalized']):
     """
     Muestra el botón de guardar revisión y gestiona el flujo de confirmación.
     """

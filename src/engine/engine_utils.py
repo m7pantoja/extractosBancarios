@@ -4,7 +4,7 @@ import pandas as pd
 import numpy as np
 import hashlib
 from typing import Literal
-import custom_exceptions
+from src import custom_exceptions
 import logging
 from .cleaner_agent import get_mapping_instructions, BankStatementSchema
 
@@ -19,7 +19,7 @@ def schema_validation(df: pd.DataFrame, mode: Literal['train','predict']) -> pd.
     With mode='train', the 'etiqueta' column is expected. With mode='predict', it is not.
     
     Returns:
-    pd.DataFrame: The validated DataFrame with additional column '__fecha__' for internal use.
+    pd.DataFrame
     '''
 
     columns = {
