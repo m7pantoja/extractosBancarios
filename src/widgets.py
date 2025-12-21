@@ -1,7 +1,7 @@
 import streamlit as st
-from src.engine.tagger import tag_files
-from src.engine.uploader import upload_review
-from src import custom_exceptions
+from engine.tagger import tag_files
+from engine.uploader import upload_review
+import custom_exceptions
 from typing import Literal
 import pandas as pd
 import logging

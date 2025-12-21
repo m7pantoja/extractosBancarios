@@ -1,7 +1,7 @@
 from .engine_utils import files_to_dataframe
 from . import model_wrapper
 from .trainer import train_model
-from src.database.download import download_model_from_gcs
+from database.download import download_model_from_gcs
 from typing import Literal
 
 def tag_files(uploaded_files: list, mode: Literal['general', 'ibecosol','erretres','personalized']):

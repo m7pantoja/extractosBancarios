@@ -1,7 +1,7 @@
 import streamlit as st
 from engine.uploader import upload_feedback
 import time
-from src import custom_exceptions
+import custom_exceptions
 
 def show_page():
     st.title("Etiquetado de Extractos Bancarios")

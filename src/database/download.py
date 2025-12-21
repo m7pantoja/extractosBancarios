@@ -5,7 +5,7 @@ import joblib
 import os
 import logging
 from typing import Literal
-from src import custom_exceptions
+import custom_exceptions
 
 bucket_name = 'extractosbancarios-cloud-lf'
 blob_names = {'general':'models/general/general_v1.joblib',

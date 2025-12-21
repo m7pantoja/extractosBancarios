@@ -1,6 +1,6 @@
 from .engine_utils import schema_validation, generate_hash
-from src.database.upload import upload_data_to_bigquery
-from src.database.upload import upload_feedback_to_bigquery
+from database.upload import upload_data_to_bigquery
+from database.upload import upload_feedback_to_bigquery
 import pandas as pd
 
 def upload_review(df, mode):

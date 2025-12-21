@@ -2,7 +2,7 @@ from google.oauth2 import service_account
 from google.cloud import bigquery
 import streamlit as st
 import logging
-from src import custom_exceptions
+import custom_exceptions
 from typing import Literal
 
 table_ids = {'general':'cloud-lf.extractosBancarios.general_tagged',
