@@ -1,4 +1,4 @@
-# 📊 Etiquetado de Extractos Bancarios
+# 📊 Etiquetado Automático de Extractos Bancarios
 
 Herramienta interactiva basada en Streamlit para el procesamiento, limpieza y etiquetado automático de extractos bancarios. Esta aplicación está diseñada para facilitar la categorización de movimientos financieros mediante reglas y modelos de Machine Learning, con integración directa a Google Cloud BigQuery.
 
