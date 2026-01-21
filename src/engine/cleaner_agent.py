@@ -24,7 +24,6 @@ class BankStatementSchema(BaseModel):
 def get_mapping_instructions(df_sample: pd.DataFrame) -> BankStatementSchema:
     try:
         client = genai.Client(api_key=st.secrets["google_ai"]["api_key"])
-
         csv_text = df_sample.to_csv(index=False)
         
         prompt = f"""
@@ -42,18 +41,43 @@ def get_mapping_instructions(df_sample: pd.DataFrame) -> BankStatementSchema:
            - ¿Hay símbolos de moneda ($, €, £) o códigos (EUR, USD) dentro de la celda? (currency_symbol)
         3. Detecta el formato de fecha (date_format).
         4. Confirma si es un extracto bancario válido (is_valid). Si no es válido, explica brevemente por qué (validation_reason).
+
+        IMPORTANTE: Los nombres de las columnas deben coincidir exactamente con los que aparecen en la fila identificada como header.
         """
 
-        response = client.models.generate_content(
-            model="gemini-2.5-flash", 
-            contents=prompt,
-            config=types.GenerateContentConfig(
-                response_mime_type="application/json",
-                response_schema=BankStatementSchema,
-            ),
-        )
-        return response.parsed
+        models_to_try = ["gemini-3-flash","gemini-2.5-flash", "gemini-2.5-flash-lite"]
 
+        for model_name in models_to_try:
+            try:
+                response = client.models.generate_content(
+                    model=model_name, 
+                    contents=prompt,
+                    config=types.GenerateContentConfig(
+                        response_mime_type="application/json",
+                        response_schema=BankStatementSchema,
+                    ),
+                )
+                return response.parsed
+            except Exception as e:
+                error_msg = str(e).lower()
+                if "429" in error_msg or "resource has been exhausted" in error_msg:
+                    logging.warning(f"Límite excedido para el modelo {model_name}. Probando el siguiente...")
+                    continue
+                elif "503" in error_msg or "overloaded" in error_msg:
+                    logging.warning(f"Modelo {model_name} sobrecargado (503). Probando el siguiente...")
+                    continue
+                elif "404" in error_msg or "not found" in error_msg:
+                    logging.warning(f"Modelo {model_name} no encontrado. Probando el siguiente...")
+                    continue
+                else:
+                    logging.error(f"Error usando el Agente de IA: {e}")
+                    raise custom_exceptions.IAAgentError("¡Error usando el Agente de IA!")
+
+        # Si el loop termina sin retornar, es que todos los modelos dieron error de cuota
+        raise custom_exceptions.quotaExceededError("Se ha excedido el límite de uso en todos los modelos de IA disponibles. Por favor intentalo de nuevo más tarde.")
+
+    except (custom_exceptions.quotaExceededError, custom_exceptions.IAAgentError):
+        raise
     except Exception as e:
         logging.error(f"Error usando el Agente de IA: {e}")
-        raise custom_exceptions.IAAgentError(f"Error usando el Agente de IA.")
+        raise custom_exceptions.IAAgentError("¡Error usando el Agente de IA!")

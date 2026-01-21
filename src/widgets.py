@@ -102,6 +102,9 @@ def tag_button(uploaded_files, mode: Literal['general','ibecosol','erretres','pe
                 except custom_exceptions.IAAgentError:
                     st.error(f"¡Error usando el Agente de IA!")
 
+                except custom_exceptions.quotaExceededError:
+                    st.error(f"Se ha excedido el límite de uso del modelo de IA. Por favor, intentalo de nuevo más tarde.")
+
                 except Exception as e:
                     logging.error(f"Error no identificado: {e}")
                     st.error(f"¡Error no identificado!")

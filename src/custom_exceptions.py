@@ -37,3 +37,7 @@ class FileStructureError(Exception):
 class InvalidFileError(Exception):
     """El archivo no es válido."""
     pass
+
+class quotaExceededError(Exception):
+    """Se ha excedido el límite de uso en todos los modelos de IA disponibles. Por favor intentalo de nuevo más tarde."""
+    pass
