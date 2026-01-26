@@ -27,7 +27,7 @@ class Model:
             metadata=model_dict['metadata']
         )
 
-    def predict(self, data: pd.DataFrame):
+    def predict(self, data: pd.DataFrame,decimal_separator_output: str ='.'):
         """Validates the data, makes predictions using the model, and returns the confidence."""
 
         validated_data = schema_validation(data, mode='predict')
@@ -47,6 +47,17 @@ class Model:
 
         Y_pred_labels = self.label_encoder.inverse_transform(Y_pred)
         data[target] = Y_pred_labels
+
+        if decimal_separator_output != '.':
+
+            def change_format(val):
+                val = str(val)
+                val = val.replace('.',decimal_separator_output)
+                
+                return val
+                
+            data['importe'] = data['importe'].apply(change_format)
+            data['saldo'] = data['saldo'].apply(change_format)
 
         return data, confidence
 

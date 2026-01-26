@@ -54,8 +54,8 @@ def show_data(df, label_encoder):
                                                                             required=True),
                                "fecha": st.column_config.DateColumn("Fecha"),
                                "descripcion": st.column_config.TextColumn("Descripción"),
-                               "importe": st.column_config.NumberColumn("Importe"),
-                               "saldo": st.column_config.NumberColumn("Saldo")})
+                               "importe": st.column_config.TextColumn("Importe"),
+                               "saldo": st.column_config.TextColumn("Saldo")})
 
     return df_edited
 

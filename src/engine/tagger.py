@@ -12,7 +12,7 @@ def tag_files(uploaded_files: list, mode: Literal['general', 'ibecosol','erretre
 
             model = train_model(unified_train, {'client': 'personalized'}) # posibles errores no controlados
             le = model.label_encoder
-            df_result, _ = model.predict(unified_predict) # posibles errores no controlados. 
+            df_result, _ = model.predict(unified_predict, decimal_separator_output=',') # posibles errores no controlados. 
 
             return df_result, le
         else:           
@@ -22,7 +22,7 @@ def tag_files(uploaded_files: list, mode: Literal['general', 'ibecosol','erretre
             model = model_wrapper.Model.from_dict(model_dict) # posibles errores no controlados
             le = model.label_encoder
 
-            df_result, confidence = model.predict(unified_df) # posibles errores no controlados.
+            df_result, confidence = model.predict(unified_df, decimal_separator_output=',') # posibles errores no controlados.
             df_result['confidence'] = confidence
 
             return df_result, le

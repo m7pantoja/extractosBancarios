@@ -47,7 +47,7 @@ def clean_file(file, file_type: Literal['excel','csv'], schema: BankStatementSch
     
     if not schema.is_valid:
         reason = schema.validation_reason if schema.validation_reason else "El formato del archivo no es válido para el modelo predictor."
-        raise custom_exceptions.InvalidFileError(f"Archivo inválido: {reason}")
+        raise custom_exceptions.InvalidFileError(f"{reason}")
     
     try:
         file.seek(0) # Reiniciar puntero del archivo por si fue leído anteriormente
@@ -111,6 +111,9 @@ def clean_file(file, file_type: Literal['excel','csv'], schema: BankStatementSch
         df_clean = df_renamed.dropna(subset=['fecha','descripcion','importe','saldo'])
         
         return df_clean
+
+    except custom_exceptions.InvalidFileError as e:
+        raise e
 
     except Exception as e:
         logging.error(f"Error limpiando archivo: {e}")
